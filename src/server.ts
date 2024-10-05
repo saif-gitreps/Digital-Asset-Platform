@@ -1,6 +1,8 @@
 import express from "express";
 import { getPayloadClient } from "./get-payload";
 import { nextApp, nextHandler } from "./next-utils";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import { appRouter } from "./trpc";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -14,6 +16,21 @@ const start = async () => {
          },
       },
    }); // similar to dbs a client
+
+   // passing any endpoints to our next trpc
+   // the req and res are passed to the createContext function which is passed to the next api endpoint
+   // in next.js we listen to the things getting passed using router handler.
+
+   app.use(
+      "/api/trpc",
+      trpcExpress.createExpressMiddleware({
+         router: appRouter,
+         createContext: ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({
+            req,
+            res,
+         }),
+      })
+   );
 
    app.use((req, res) => nextHandler(req, res));
 
