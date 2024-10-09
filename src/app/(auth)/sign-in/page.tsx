@@ -15,10 +15,23 @@ import {
 } from "@/lib/validators/account-credentials-validator";
 import { trpc } from "@/trpc/client";
 import { toast } from "sonner";
-import { ZodError } from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const Page = () => {
+   const searchParams = useSearchParams();
+   const router = useRouter();
+
+   const isSeller: boolean = searchParams.get("as") === "seller";
+   const origin = searchParams.get("origin"); // redirect from example: cart page to sign-in
+
+   const continueAsSeller = () => {
+      router.push("?as=seller");
+   };
+
+   const continueAsCustomer = () => {
+      router.replace("/sign-in", undefined);
+   };
+
    const {
       register,
       handleSubmit,
@@ -27,32 +40,33 @@ const Page = () => {
       resolver: zodResolver(AuthCredentialsValidator),
    });
 
-   const router = useRouter();
+   const { mutate: signIn, isLoading } = trpc.auth.signIn.useMutation({
+      onSuccess: () => {
+         toast.success("Signed in successfully");
 
-   const { mutate } = trpc.auth.createPayloadUser.useMutation({
-      onError: (error) => {
-         if (error.data?.code === "CONFLICT") {
-            toast.error("Email already exists, try to sign in instead");
+         router.refresh(); // for navbar to update accordingly
 
+         if (origin) {
+            router.push(`/${origin}`); // Send user to the original page on which they where asked to sign in
             return;
          }
 
-         if (error instanceof ZodError) {
-            toast.error(error.issues[0].message);
-
+         if (isSeller) {
+            router.push("/sell");
             return;
          }
 
-         toast.error("An error occurred, please try again");
+         router.push("/");
       },
-      onSuccess: ({ sentToEmail }) => {
-         toast.success(`We've sent an verification email to ${sentToEmail}`);
-         router.push("/verify-email?to=" + sentToEmail);
+      onError: (error) => {
+         if (error.data?.code === "UNAUTHORIZED") {
+            toast.error("Invalid email or password");
+         }
       },
    });
 
    const onSubmit = ({ email, password }: TAuthCredentialsValidator) => {
-      mutate({ email, password });
+      signIn({ email, password });
    };
 
    return (
@@ -61,16 +75,19 @@ const Page = () => {
             <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
                <div className="flex flex-col  items-center space-y-0 text-center">
                   <Icons.logo className="h-20 w-20" />
-                  <h1 className="text-2xl font-bold">Create a new account</h1>
+                  <h1 className="text-2xl font-bold">
+                     Sign in to your {isSeller ? "Seller" : ""} account
+                  </h1>
+
+                  <h2 className="text-sm font-medium">Or</h2>
 
                   <Link
-                     href="/sign-in"
+                     href="/sign-up"
                      className={buttonVariants({
                         variant: "link",
                      })}
                   >
-                     Login if you already have an account{" "}
-                     <ArrowDownRight className="h-5 w-5" />
+                     Create a new account <ArrowDownRight className="h-5 w-5" />
                   </Link>
                </div>
 
@@ -112,9 +129,39 @@ const Page = () => {
                            )}
                         </div>
 
-                        <Button>Sign up</Button>
+                        <Button>Sign in</Button>
                      </div>
                   </form>
+
+                  <div className="relative">
+                     <div aria-hidden className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t"></span>
+                     </div>
+
+                     <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background px-2 text-muted-foreground">
+                           Or
+                        </span>
+                     </div>
+                  </div>
+
+                  {isSeller ? (
+                     <Button
+                        onClick={continueAsCustomer}
+                        variant="secondary"
+                        disabled={isLoading}
+                     >
+                        Continue as customer
+                     </Button>
+                  ) : (
+                     <Button
+                        onClick={continueAsSeller}
+                        variant="secondary"
+                        disabled={isLoading}
+                     >
+                        Continue as seller
+                     </Button>
+                  )}
                </div>
             </div>
          </div>
