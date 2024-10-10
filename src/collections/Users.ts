@@ -1,7 +1,7 @@
 import { CollectionConfig } from "payload/types";
 
 // Admins  are the owners of the platform that verifies all the products being sold
-// the users will be both buyers and sellers
+// Users will be both buyers and sellers
 
 export const Users: CollectionConfig = {
    slug: "users",
@@ -21,10 +21,10 @@ export const Users: CollectionConfig = {
          name: "role",
          defaultValue: "user",
          required: true,
-         //  admin: {
-         //     // condition: ({ req }) => req.user.role === "admin",
-         //     condition: () => false,
-         //  },
+         admin: {
+            //condition: ({ req }) => req.user.role === "admin",
+            //condition: () => false,
+         },
          type: "select",
          options: [
             { label: "Admin", value: "admin" },

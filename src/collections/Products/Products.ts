@@ -44,17 +44,17 @@ export const Products: CollectionConfig = {
          options: PRODUCT_CATEGORIES.map(({ label, value }) => ({ label, value })),
          required: true,
       },
-      //   {
-      //      name: "product_files",
-      //      label: "Product file(s)",
-      //      type: "relationship",
-      //      relationTo: "product_files",
-      //      required: true,
-      //      hasMany: false, // TODO: Change to true
-      //   },
+      {
+         label: "Product file(s)",
+         name: "product_files",
+         type: "relationship",
+         relationTo: "product_files",
+         required: true,
+         hasMany: false, // TODO: Change to true
+      },
       {
          name: "approvedForSale",
-         label: "Product status",
+         label: "Product Status",
          type: "select",
          defaultValue: "pending",
          access: {
@@ -72,8 +72,8 @@ export const Products: CollectionConfig = {
                value: "approved",
             },
             {
-               label: "Rejected",
-               value: "rejected",
+               label: "Denied",
+               value: "denied",
             },
          ],
       },

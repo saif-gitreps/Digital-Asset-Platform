@@ -28,7 +28,8 @@ export const Media: CollectionConfig = {
       read: async ({ req }) => {
          const referer = req.headers.referer;
 
-         // either people who are broswing (unauthenticated) can read or if you are authenicated and not on the seller dashboard can see the media.
+         // either people who are broswing (unauthenticated) can read or if you are
+         // authenticated and not on the seller dashboard can see the media.
 
          if (!req.user || !referer?.includes("sell")) {
             return true;
