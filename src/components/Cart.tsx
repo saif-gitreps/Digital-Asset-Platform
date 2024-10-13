@@ -1,5 +1,5 @@
 "use client";
-import { ShoppingCart } from "lucide-react";
+import { Loader2, ShoppingCart } from "lucide-react";
 import {
    Sheet,
    SheetContent,
@@ -14,10 +14,15 @@ import Link from "next/link";
 import { buttonVariants } from "./ui/button";
 import Image from "next/image";
 import { useCart } from "@/hooks/use-carts";
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import CartItem from "./CartItem";
+import { useEffect, useState } from "react";
 
 const Cart = () => {
+   const [isMounted, setIsMounted] = useState<boolean>(false);
+
+   useEffect(() => setIsMounted(true), []);
+
    const { items } = useCart();
    const itemCount = items?.length;
    const fee = 1;
@@ -32,7 +37,7 @@ const Cart = () => {
             />
 
             <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-               {itemCount}
+               {isMounted ? itemCount : <Loader2 className="animate-spin" />}
             </span>
          </SheetTrigger>
          <SheetContent className="flex w-full flex-col pr-0 sm:max-w-lg">
@@ -43,9 +48,10 @@ const Cart = () => {
                <>
                   <div className="flex w-full flex-col pr-6">
                      <ScrollArea>
-                        {items.map(({ product }) => (
-                           <CartItem product={product} key={product.id} />
+                        {items.map(({ product }, index) => (
+                           <CartItem product={product} key={product.id + index} />
                         ))}
+                        <ScrollBar orientation="vertical" />
                      </ScrollArea>
                   </div>
                   <div className="space-y-4 pr-6">

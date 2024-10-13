@@ -16,16 +16,8 @@ interface PageProps {
 }
 
 const BREADCRUMBS = [
-   {
-      id: 1,
-      name: "Home",
-      href: "/",
-   },
-   {
-      id: 2,
-      name: "Products",
-      href: "/products",
-   },
+   { id: 1, name: "Home", href: "/" },
+   { id: 2, name: "Products", href: "/products" },
 ];
 
 const Page = async ({ params }: PageProps) => {
@@ -46,7 +38,7 @@ const Page = async ({ params }: PageProps) => {
       },
    });
 
-   const product = products[0]; // destructing first/index:0 prod
+   const [product] = products; // destructing first index.
 
    if (!product) return notFound();
 
@@ -61,20 +53,18 @@ const Page = async ({ params }: PageProps) => {
    return (
       <MaxWidthWrapper className="bg-white">
          <div className="bg-white">
-            <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x lg:px-8">
-               {/* {TODO: product details} */}
+            <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
                <div className="lg:max-w-lg lg:self-end">
                   <ol className="flex items-center space-x-2">
                      {BREADCRUMBS.map((breadcrumb, i) => (
                         <li key={breadcrumb.href}>
-                           <div className="flex items-center tet-sm">
+                           <div className="flex items-center text-sm">
                               <Link
                                  href={breadcrumb.href}
-                                 className="font-medium text-sm  text-muted-foreground hover:text-gray-900"
+                                 className="font-medium text-sm text-muted-foreground hover:text-gray-900"
                               >
                                  {breadcrumb.name}
                               </Link>
-
                               {i !== BREADCRUMBS.length - 1 ? (
                                  <svg
                                     viewBox="0 0 20 20"
@@ -91,41 +81,41 @@ const Page = async ({ params }: PageProps) => {
                   </ol>
 
                   <div className="mt-4">
-                     <h1 className="text-3xl font-bold tracking-tight text0gray-900 sm:text-4xl">
+                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                         {product.name}
                      </h1>
                   </div>
 
-                  <section className="mt-4 ">
+                  <section className="mt-4">
                      <div className="flex items-center">
                         <p className="font-medium text-gray-900">
                            {formatPrice(product.price)}
                         </p>
 
-                        <div className="ml-4 border-1 text-muted-foreground border-gray-300 pl-4">
+                        <div className="ml-4 border-l text-muted-foreground border-gray-300 pl-4">
                            {label}
                         </div>
                      </div>
 
                      <div className="mt-4 space-y-6">
                         <p className="text-base text-muted-foreground">
-                           {product.desciption}
+                           {product.description}
                         </p>
                      </div>
 
-                     <div className="mt-4 flex items-center">
+                     <div className="mt-6 flex items-center">
                         <Check
-                           aria-hidden
+                           aria-hidden="true"
                            className="h-5 w-5 flex-shrink-0 text-green-500"
                         />
-                        <p className="mt-2 text-sm text-muted-foreground">
+                        <p className="ml-2 text-sm text-muted-foreground">
                            Instant delivery
                         </p>
                      </div>
                   </section>
                </div>
 
-               <div className="mt-10 lg:col-start-2 lg:row-start-2 lg:mt-0 lg:self-center">
+               <div className="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center">
                   <div className="aspect-square rounded-lg">
                      <ImageSlider urls={validUrls} />
                   </div>
@@ -136,14 +126,15 @@ const Page = async ({ params }: PageProps) => {
                      <div className="mt-10">
                         <AddToCartButton product={product} />
                      </div>
-                     <div className="mt-6">
-                        <div className="group inline-flex text-sm font-medium">
+                     <div className="mt-6 text-center">
+                        <div className="group inline-flex text-sm text-medium">
                            <Shield
-                              aria-hidden
-                              className="m-r-2 h-5 w-5 flex-shrink-0 text-gray-400"
+                              aria-hidden="true"
+                              className="mr-2 h-5 w-5 flex-shrink-0 text-gray-400"
                            />
                            <span className="text-muted-foreground hover:text-gray-700">
-                              Dont like it after purchase? You can return after 30 days!
+                              Didnt like it? You can return it withing 30 Days of
+                              purchase.
                            </span>
                         </div>
                      </div>
@@ -152,12 +143,11 @@ const Page = async ({ params }: PageProps) => {
             </div>
          </div>
 
-         {/* {TODO: a reccomendation alg} */}
          <ProductReel
             href="/products"
             query={{ category: product.category, limit: 4 }}
             title={`Similar ${label}`}
-            subtitle={`Checkout more similar assets like ${product.name}`}
+            subtitle={`Browse similar high-quality ${label} just like '${product.name}'`}
          />
       </MaxWidthWrapper>
    );
