@@ -24,7 +24,7 @@ export interface Config {
  */
 export interface User {
   id: string;
-  role?: ('admin' | 'user') | null;
+  role: 'admin' | 'user';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -50,7 +50,7 @@ export interface Product {
   price: number;
   category: 'ui_kits' | 'icons';
   product_files: string | ProductFile;
-  approvedForSale?: ('pending' | 'approved' | 'rejected') | null;
+  approvedForSale?: ('pending' | 'approved' | 'denied') | null;
   priceId?: string | null;
   stripeId?: string | null;
   images: {
