@@ -5,6 +5,7 @@ import ProductReel from "@/components/ProductReel";
 import { PRODUCT_CATEGORIES } from "@/config";
 import { getPayloadClient } from "@/get-payload";
 import { formatPrice } from "@/lib/utils";
+import { Product } from "../../../payload-types";
 import { Check, Shield } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -38,7 +39,7 @@ const Page = async ({ params }: PageProps) => {
       },
    });
 
-   const [product] = products; // destructing first index.
+   const [product] = products as unknown as Product[]; // destructing first index.
 
    if (!product) return notFound();
 
@@ -82,14 +83,14 @@ const Page = async ({ params }: PageProps) => {
 
                   <div className="mt-4">
                      <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                        {product.name}
+                        {product.name as string}
                      </h1>
                   </div>
 
                   <section className="mt-4">
                      <div className="flex items-center">
                         <p className="font-medium text-gray-900">
-                           {formatPrice(product.price)}
+                           {formatPrice(product.price as number)}
                         </p>
 
                         <div className="ml-4 border-l text-muted-foreground border-gray-300 pl-4">
@@ -99,7 +100,7 @@ const Page = async ({ params }: PageProps) => {
 
                      <div className="mt-4 space-y-6">
                         <p className="text-base text-muted-foreground">
-                           {product.description}
+                           {product.description as string}
                         </p>
                      </div>
 

@@ -31,10 +31,10 @@ const ProductReel = (props: ProductReelProps) => {
 
    const products = queryResults?.pages.flatMap((page) => page.items);
 
-   let map: (Product | null)[] = [];
+   let map: Product[] | null[] = [];
 
    if (products && products.length) {
-      map = products;
+      map = products as unknown as Product[];
    } else if (isLoading) {
       map = new Array<null>(query.limit ?? FALLBACK_LIMIT).fill(null);
       // creating a new array of type null according to the limit if passed.
